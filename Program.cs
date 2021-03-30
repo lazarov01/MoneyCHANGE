@@ -1,25 +1,34 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 
-
-namespace MoneyChange
+namespace Server_MoneyChange
 {
-    static class Program
+    class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginForm());
+            //checks when is the last change to the currencies
+            CheckDate date = new CheckDate();
+            if (!date.IsTrue)
+            {
+                //if it is not today
+                //gets and saves the currencies in the MySQL database and changes the last date of change
+                CurrencyReciever.GetCurrencies();
+                Console.WriteLine("Currencies recieved!");
+
+                CurrencySaver.Save();
+                Console.WriteLine("Currencies saved!");
+                
+                date.Change();
+                Console.WriteLine("Date changed");
+
+            }
+            
+            //Starting the server
+            Server server = new Server();
         }
     }
 }
